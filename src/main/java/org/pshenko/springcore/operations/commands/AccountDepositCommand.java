@@ -22,7 +22,9 @@ public class AccountDepositCommand implements OperationCommand {
         int accountId = input.readPositiveInt("Enter account id:", "account id");
         int amount = input.readPositiveInt("Enter amount:", "amount");
         Account account = accountService.deposit(accountId, amount);
-        System.out.println("Deposited " + amount + " to account " + accountId + ". New balance: " + account.getMoneyAmount());
+        System.out.println("Deposited " + amount
+            + " to account " + accountId
+            + ". New balance: " + account.getMoneyAmount());
     }
 
     @Override

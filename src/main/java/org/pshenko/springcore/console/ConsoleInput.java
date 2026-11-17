@@ -14,14 +14,20 @@ public class ConsoleInput {
     }
 
     public ConsoleOperationType readCommand() {
-        System.out.println("Enter command:");
-        String input = scanner.nextLine().trim().toUpperCase();
-        return ConsoleOperationType.valueOf(input);
+        while (true) {
+            System.out.print("\nEnter command: ");
+            String raw = scanner.nextLine().trim();
+            try {
+                return ConsoleOperationType.valueOf(raw.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: unknown command \"" + raw + "\"");
+            }
+        }
     }
 
     public String readLogin() {
         while (true) {
-            System.out.println("Enter login:");
+            System.out.print("Enter login:");
             String login = scanner.nextLine().trim();
             if (!login.isEmpty()) {
                 return login;
@@ -38,6 +44,7 @@ public class ConsoleInput {
                 int value = Integer.parseInt(line);
                 if (value <= 0) {
                     System.out.println("please enter a positive " + parameterName);
+                    continue;
                 }
                 return value;
             } catch (NumberFormatException e) {

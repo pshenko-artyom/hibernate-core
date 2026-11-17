@@ -19,11 +19,11 @@ public class AccountCloseCommand implements OperationCommand {
 
     @Override
     public void execute() {
-        int accountId = input.readPositiveInt("Enter account id to close: ", "account id");
+        int accountId = input.readPositiveInt("Enter account id to close:", "account id");
         CloseResult result = accountService.close(accountId);
-        System.out.println("Account " + accountId + " closed. " +
-            "Remaining balance " + result.transferredAmount() +
-            " transferred to account " + result.targetAccountId());
+        System.out.println("Account " + accountId + " closed. "
+            + "Remaining balance " + result.transferredAmount()
+            + " transferred to account " + result.targetAccountId());
     }
 
     @Override

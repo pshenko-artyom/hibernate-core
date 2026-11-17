@@ -19,7 +19,7 @@ public class AccountCreateCommand implements OperationCommand {
 
     @Override
     public void execute() {
-        int userId = input.readPositiveInt("Enter user id: ", "user id");
+        int userId = input.readPositiveInt("Enter user id:", "user id");
         Account account = accountService.create(userId);
         System.out.println("Account created: " + account);
     }
