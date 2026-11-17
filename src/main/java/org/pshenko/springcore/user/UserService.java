@@ -29,7 +29,7 @@ public class UserService {
     public Optional<User> findByLogin(String rawLogin) {
         String login = validateAndTrim(rawLogin);
         for (User user : users.values()) {
-            if (user.getLogin().equals(login)) {
+            if (user.getLogin().equalsIgnoreCase(login)) {
                 return Optional.of(user);
             }
         }
