@@ -1,5 +1,6 @@
 package org.pshenko.springcore.console;
 
+import org.pshenko.springcore.exception.InputClosedException;
 import org.pshenko.springcore.operations.ConsoleOperationType;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,8 @@ public class ConsoleInput {
 
     public ConsoleOperationType readCommand() {
         while (true) {
-            System.out.print("\nEnter command: ");
-            String raw = scanner.nextLine().trim();
+            System.out.println("\nEnter command:");
+            String raw = nextLine().trim();
             try {
                 return ConsoleOperationType.valueOf(raw.toUpperCase());
             } catch (IllegalArgumentException e) {
@@ -27,29 +28,36 @@ public class ConsoleInput {
 
     public String readLogin() {
         while (true) {
-            System.out.print("Enter login:");
-            String login = scanner.nextLine().trim();
+            System.out.println("Enter login:");
+            String login = nextLine().trim();
             if (!login.isEmpty()) {
                 return login;
             }
-            System.out.println("login cannot be empty");
+            System.out.println("Error: login cannot be empty");
         }
     }
 
     public int readPositiveInt(String prompt, String parameterName) {
         while (true) {
             System.out.println(prompt);
-            String line = scanner.nextLine().trim();
+            String line = nextLine().trim();
             try {
                 int value = Integer.parseInt(line);
                 if (value <= 0) {
-                    System.out.println("please enter a positive " + parameterName);
+                    System.out.println("Error: please enter a positive " + parameterName);
                     continue;
                 }
                 return value;
             } catch (NumberFormatException e) {
-                System.out.println("please enter a positive " + parameterName);
+                System.out.println("Error: please enter a positive " + parameterName);
             }
         }
+    }
+
+    private String nextLine() {
+        if (!scanner.hasNextLine()) {
+            throw new InputClosedException();
+        }
+        return scanner.nextLine();
     }
 }

@@ -30,7 +30,7 @@ public class AccountProperties {
         if (defaultAmount < 0) {
             throw new IllegalArgumentException("defaultAmount cannot be negative");
         }
-        if (!Double.isFinite(transferCommission) || transferCommission < 0.0 || transferCommission >= 1.0) {
+        if (!Double.isFinite(transferCommission) || transferCommission < 0.0 || transferCommission > 1.0) {
             throw new IllegalArgumentException("transferCommission must be between 0.0 and 1.0");
         }
     }

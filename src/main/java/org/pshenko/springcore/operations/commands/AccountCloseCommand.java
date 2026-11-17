@@ -23,7 +23,7 @@ public class AccountCloseCommand implements OperationCommand {
         CloseResult result = accountService.close(accountId);
         System.out.println("Account " + accountId + " closed. "
             + "Remaining balance " + result.transferredAmount()
-            + " transferred to account " + result.targetAccountId());
+            + " transferred to account " + result.targetAccountId() + ".");
     }
 
     @Override

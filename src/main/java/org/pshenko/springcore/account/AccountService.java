@@ -65,10 +65,10 @@ public class AccountService {
             throw new BankException("insufficient funds on source account id=%d, moneyAmount=%d, attempted transfer=%d"
                 .formatted(fromAccountId, fromAccount.getMoneyAmount(), amount));
         }
-        double transferCommission = fromAccount.getUserId() == toAccount.getUserId()
+        boolean sameUser = fromAccount.getUserId() == toAccount.getUserId();
+        double transferCommission = sameUser
             ? 0
             : properties.getTransferCommission();
-        boolean sameUser = fromAccount.getUserId() == toAccount.getUserId();
         int received = (int) Math.round(amount * (1 - transferCommission));
         int commission = amount - received;
         fromAccount.setMoneyAmount(fromAccount.getMoneyAmount() - amount);

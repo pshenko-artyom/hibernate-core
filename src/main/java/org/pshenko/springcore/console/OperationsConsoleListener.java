@@ -1,6 +1,7 @@
 package org.pshenko.springcore.console;
 
 import org.pshenko.springcore.exception.BankException;
+import org.pshenko.springcore.exception.InputClosedException;
 import org.pshenko.springcore.operations.ConsoleOperationType;
 import org.pshenko.springcore.operations.OperationCommand;
 import org.springframework.stereotype.Component;
@@ -26,20 +27,26 @@ public class OperationsConsoleListener {
         String available = Arrays.stream(ConsoleOperationType.values())
             .map(Enum::name)
             .collect(Collectors.joining(", "));
+
         System.out.println("MiniBank started. Type EXIT to stop.");
         System.out.println("Available commands: " + available);
-        while (true) {
-            ConsoleOperationType type = input.readCommand();
-            if (type == ConsoleOperationType.EXIT) {
-                System.out.println("Minibank stopped");
-                break;
-            }
 
-            try {
-                commands.get(type).execute();
-            } catch (BankException e) {
-                System.out.println("Error: " + e.getMessage());
+        try {
+            while (true) {
+                ConsoleOperationType type = input.readCommand();
+                if (type == ConsoleOperationType.EXIT) {
+                    System.out.println("MiniBank stopped.");
+                    break;
+                }
+
+                try {
+                    commands.get(type).execute();
+                } catch (BankException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
             }
+        } catch (InputClosedException e) {
+            System.out.println("MiniBank stopped.");
         }
     }
 }

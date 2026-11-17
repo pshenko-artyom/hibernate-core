@@ -19,7 +19,7 @@ public class AccountTransferCommand implements OperationCommand {
 
     @Override
     public void execute() {
-        int from = input.readPositiveInt("Enter source account id:", "target account id");
+        int from = input.readPositiveInt("Enter source account id:", "source account id");
         int to = input.readPositiveInt("Enter target account id:", "target account id");
         int amount = input.readPositiveInt("Enter amount:", "amount");
         TransferResult transfer = accountService.transfer(from, to, amount);
@@ -28,7 +28,7 @@ public class AccountTransferCommand implements OperationCommand {
             System.out.println("Transfer completed from account " + from
                 + " to account " + to
                 + ". Amount: " + amount
-                + " (no commission, same user)\n");
+                + " (no commission, same user)");
         } else {
             System.out.println("Transfer completed from account " + from
                 + " to account " + to
