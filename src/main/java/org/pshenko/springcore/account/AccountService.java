@@ -68,11 +68,12 @@ public class AccountService {
         double transferCommission = fromAccount.getUserId() == toAccount.getUserId()
             ? 0
             : properties.getTransferCommission();
+        boolean sameUser = fromAccount.getUserId() == toAccount.getUserId();
         int received = (int) Math.round(amount * (1 - transferCommission));
         int commission = amount - received;
         fromAccount.setMoneyAmount(fromAccount.getMoneyAmount() - amount);
         toAccount.setMoneyAmount(toAccount.getMoneyAmount() + received);
-        return new TransferResult(amount, commission, received);
+        return new TransferResult(commission, received, sameUser);
     }
 
     public CloseResult close(int accountId) {
@@ -89,7 +90,7 @@ public class AccountService {
         targetAccount.setMoneyAmount(targetAccount.getMoneyAmount() + transferred);
         userAccounts.remove(accountToClose);
         accounts.remove(accountToClose.getId());
-        return new CloseResult(accountToClose.getId(), targetAccount.getId(), transferred);
+        return new CloseResult(targetAccount.getId(), transferred);
     }
 
     private Account getAccountOrThrow(int accountId) {
