@@ -24,7 +24,7 @@ public class AccountTransferCommand implements OperationCommand {
         int amount = input.readPositiveInt("Enter amount:", "amount");
         TransferResult transfer = accountService.transfer(from, to, amount);
 
-        if (transfer.sameUser()) {
+        if (transfer.isSameUser()) {
             System.out.println("Transfer completed from account " + from
                 + " to account " + to
                 + ". Amount: " + amount

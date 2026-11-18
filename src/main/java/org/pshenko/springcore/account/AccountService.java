@@ -73,7 +73,7 @@ public class AccountService {
         int commission = amount - received;
         fromAccount.setMoneyAmount(fromAccount.getMoneyAmount() - amount);
         toAccount.setMoneyAmount(toAccount.getMoneyAmount() + received);
-        return new TransferResult(commission, received, sameUser);
+        return new TransferResult(fromAccountId, toAccountId, commission, received);
     }
 
     public CloseResult close(int accountId) {
