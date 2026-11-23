@@ -20,8 +20,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(User user, int moneyAmount) {
-        this.user = user;
+    public Account(int moneyAmount) {
         this.moneyAmount = moneyAmount;
     }
 

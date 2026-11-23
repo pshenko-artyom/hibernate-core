@@ -19,7 +19,6 @@ public class User {
     @OneToMany(
         mappedBy = "user",
         fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST},
         orphanRemoval = true
     )
     private List<Account> accounts = new ArrayList<>();

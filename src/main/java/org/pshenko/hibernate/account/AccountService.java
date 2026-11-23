@@ -1,55 +1,52 @@
 package org.pshenko.hibernate.account;
 
 import org.pshenko.hibernate.exception.BankException;
-import org.pshenko.hibernate.user.UserService;
-import org.springframework.stereotype.Component;
+import org.pshenko.hibernate.user.User;
+import org.pshenko.hibernate.util.TransactionHelper;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
-@Component
+@Service
 public class AccountService {
-    private final Map<Integer, Account> accounts;
     private final AccountProperties properties;
-    private final UserService userService;
-    private int idCounter;
+    private final TransactionHelper transactionHelper;
 
-    public AccountService(AccountProperties properties, UserService userService) {
+    public AccountService(AccountProperties properties, TransactionHelper transactionHelper) {
         this.properties = properties;
-        this.userService = userService;
-        this.accounts = new HashMap<>();
-        idCounter = 0;
+        this.transactionHelper = transactionHelper;
     }
 
-//    public Account create(int userId) {
-//        User user = userService.findById(userId)
-//            .orElseThrow(() -> new BankException("user with id=%d not found".formatted(userId)));
-//        idCounter++;
-//        Account account = new Account(idCounter, userId, properties.getDefaultAmount());
-//        user.getAccounts().add(account);
-//        accounts.put(idCounter, account);
+    public Account create(int userId) {
+        return transactionHelper.executeInTransaction(session -> {
+            User user = Optional.ofNullable(session.find(User.class, userId))
+                .orElseThrow(() -> new BankException("user with id=%d not found".formatted(userId)));
+            Account account = new Account(properties.getDefaultAmount());
+            user.addAccount(account);
+            session.persist(account);
+            return account;
+        });
+    }
+
+//    public Account deposit(int accountId, int amount) {
+//        validateAmount(amount);
+//        Account account = getAccountOrThrow(accountId);
+//        int existingMoney = account.getMoneyAmount();
+//        account.setMoneyAmount(existingMoney + amount);
 //        return account;
 //    }
-
-    public Account deposit(int accountId, int amount) {
-        validateAmount(amount);
-        Account account = getAccountOrThrow(accountId);
-        int existingMoney = account.getMoneyAmount();
-        account.setMoneyAmount(existingMoney + amount);
-        return account;
-    }
-
-    public Account withdraw(int accountId, int amount) {
-        validateAmount(amount);
-        Account account = getAccountOrThrow(accountId);
-        int existingMoney = account.getMoneyAmount();
-        if (existingMoney < amount) {
-            throw new BankException("insufficient funds on account id=%d, moneyAmount=%d, attempted withdraw=%d"
-                .formatted(accountId, existingMoney, amount));
-        }
-        account.setMoneyAmount(existingMoney - amount);
-        return account;
-    }
+//
+//    public Account withdraw(int accountId, int amount) {
+//        validateAmount(amount);
+//        Account account = getAccountOrThrow(accountId);
+//        int existingMoney = account.getMoneyAmount();
+//        if (existingMoney < amount) {
+//            throw new BankException("insufficient funds on account id=%d, moneyAmount=%d, attempted withdraw=%d"
+//                .formatted(accountId, existingMoney, amount));
+//        }
+//        account.setMoneyAmount(existingMoney - amount);
+//        return account;
+//    }
 
 //    public TransferResult transfer(int fromAccountId, int toAccountId, int amount) {
 //        validateAmount(amount);
@@ -90,14 +87,14 @@ public class AccountService {
 //        return new CloseResult(targetAccount.getId(), transferred);
 //    }
 
-    private Account getAccountOrThrow(int accountId) {
-        Account account = accounts.get(accountId);
-        if (account == null) {
-            throw new BankException("account with id=%d not found".formatted(accountId));
-        }
-        return account;
-    }
+//    private Account getAccountOrThrow(int accountId) {
 
+    /// /        Account account = accounts.get(accountId);
+//        if (account == null) {
+//            throw new BankException("account with id=%d not found".formatted(accountId));
+//        }
+//        return account;
+//    }
     private void validateAmount(int amount) {
         if (amount <= 0) {
             throw new BankException("amount must be greater than zero");

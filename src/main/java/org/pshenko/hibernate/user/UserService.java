@@ -1,51 +1,56 @@
 package org.pshenko.hibernate.user;
 
+import org.pshenko.hibernate.account.AccountService;
 import org.pshenko.hibernate.exception.BankException;
-import org.springframework.stereotype.Component;
+import org.pshenko.hibernate.util.TransactionHelper;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-@Component
+@Service
 public class UserService {
-    private final Map<Integer, User> users;
-    private int idCounter;
+    private final TransactionHelper transactionHelper;
+    private final AccountService accountService;
 
-    public UserService() {
-        users = new HashMap<>();
-        idCounter = 0;
+    public UserService(TransactionHelper transactionHelper, AccountService accountService) {
+        this.transactionHelper = transactionHelper;
+        this.accountService = accountService;
     }
 
     public User create(String rawLogin) {
-//        String login = validateAndTrim(rawLogin);
-//        findByLogin(login).ifPresent(user -> {
-//            throw new BankException("user with login \"%s\" already exists".formatted(login));
-//        });
-//        idCounter++;
-//        User user = new User(idCounter, login, new ArrayList<>());
-//        users.put(idCounter, user);
-//        return user;
-        return null;
+        String login = validateAndTrim(rawLogin);
+        return transactionHelper.executeInTransaction(session -> {
+            findByLogin(login).ifPresent(user -> {
+                throw new BankException("user with login \"%s\" already exists".formatted(login));
+            });
+            User user = new User(login);
+            session.persist(user);
+            accountService.create(user.getId());
+            return user;
+        });
     }
 
     public Optional<User> findByLogin(String rawLogin) {
         String login = validateAndTrim(rawLogin);
-        for (User user : users.values()) {
-            if (user.getLogin().equals(login)) {
-                return Optional.of(user);
-            }
-        }
-        return Optional.empty();
+        return transactionHelper.executeInTransaction(session -> {
+            return session.createQuery("from User where login = :login", User.class)
+                .setParameter("login", login)
+                .uniqueResultOptional();
+        });
     }
 
     public Optional<User> findById(int id) {
-        return Optional.ofNullable(users.get(id));
+        return transactionHelper.executeInTransaction(session -> {
+            return Optional.of(session.find(User.class, id));
+        });
     }
 
     public List<User> findAll() {
-        return users.values().stream().toList();
+        return transactionHelper.executeInTransaction(session -> {
+            return session.createQuery("select u from User u left join fetch u.accounts", User.class)
+                .getResultList();
+        });
     }
 
     private String validateAndTrim(String login) {

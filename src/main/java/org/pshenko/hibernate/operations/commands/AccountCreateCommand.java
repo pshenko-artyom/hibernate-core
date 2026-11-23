@@ -1,5 +1,6 @@
 package org.pshenko.hibernate.operations.commands;
 
+import org.pshenko.hibernate.account.Account;
 import org.pshenko.hibernate.account.AccountService;
 import org.pshenko.hibernate.console.ConsoleInput;
 import org.pshenko.hibernate.operations.ConsoleOperationType;
@@ -18,9 +19,9 @@ public class AccountCreateCommand implements OperationCommand {
 
     @Override
     public void execute() {
-//        int userId = input.readPositiveInt("Enter user id:", "user id");
-//        Account account = accountService.create(userId);
-//        System.out.println("Account created: " + account);
+        int userId = input.readPositiveInt("Enter user id:", "user id");
+        Account account = accountService.create(userId);
+        System.out.println("Account created: " + account);
     }
 
     @Override
