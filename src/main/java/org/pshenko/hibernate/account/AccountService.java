@@ -28,27 +28,31 @@ public class AccountService {
         });
     }
 
-//    public Account deposit(int accountId, int amount) {
-//        validateAmount(amount);
-//        Account account = getAccountOrThrow(accountId);
-//        int existingMoney = account.getMoneyAmount();
-//        account.setMoneyAmount(existingMoney + amount);
-//        return account;
-//    }
-//
-//    public Account withdraw(int accountId, int amount) {
-//        validateAmount(amount);
-//        Account account = getAccountOrThrow(accountId);
-//        int existingMoney = account.getMoneyAmount();
-//        if (existingMoney < amount) {
-//            throw new BankException("insufficient funds on account id=%d, moneyAmount=%d, attempted withdraw=%d"
-//                .formatted(accountId, existingMoney, amount));
-//        }
-//        account.setMoneyAmount(existingMoney - amount);
-//        return account;
-//    }
+    public Account deposit(int accountId, int amount) {
+        validateAmount(amount);
+        return transactionHelper.executeInTransaction(session -> {
+            Account account = findById(accountId);
+            int existing = account.getMoneyAmount();
+            account.setMoneyAmount(existing + amount);
+            return account;
+        });
+    }
 
-//    public TransferResult transfer(int fromAccountId, int toAccountId, int amount) {
+    public Account withdraw(int accountId, int amount) {
+        validateAmount(amount);
+        return transactionHelper.executeInTransaction(session -> {
+            Account account = findById(accountId);
+            int existing = account.getMoneyAmount();
+            if (existing < amount) {
+                throw new BankException("insufficient funds on account id=%d, moneyAmount=%d, attempted withdraw=%d"
+                    .formatted(accountId, existing, amount));
+            }
+            account.setMoneyAmount(existing - amount);
+            return account;
+        });
+    }
+
+    //    public TransferResult transfer(int fromAccountId, int toAccountId, int amount) {
 //        validateAmount(amount);
 //        if (fromAccountId == toAccountId) {
 //            throw new BankException("cannot transfer to the same account id=%d".formatted(fromAccountId));
@@ -86,15 +90,14 @@ public class AccountService {
 //        accounts.remove(accountToClose.getId());
 //        return new CloseResult(targetAccount.getId(), transferred);
 //    }
+    
+    public Account findById(int accountId) {
+        return transactionHelper.executeInTransaction(session -> {
+            return Optional.ofNullable(session.find(Account.class, accountId))
+                .orElseThrow(() -> new BankException("account with id=%d not found".formatted(accountId)));
+        });
+    }
 
-//    private Account getAccountOrThrow(int accountId) {
-
-    /// /        Account account = accounts.get(accountId);
-//        if (account == null) {
-//            throw new BankException("account with id=%d not found".formatted(accountId));
-//        }
-//        return account;
-//    }
     private void validateAmount(int amount) {
         if (amount <= 0) {
             throw new BankException("amount must be greater than zero");
