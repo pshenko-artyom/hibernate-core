@@ -1,4 +1,4 @@
-package org.pshenko.hibernate.config;
+package org.pshenko.hibernate.config.hibernate;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -49,7 +49,7 @@ public class HibernateProperties {
     public String getPassword() {
         return password;
     }
-    
+
     public String getHbm2dll() {
         return hbm2dll;
     }

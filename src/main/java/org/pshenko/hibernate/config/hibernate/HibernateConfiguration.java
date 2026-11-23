@@ -1,4 +1,4 @@
-package org.pshenko.hibernate.config;
+package org.pshenko.hibernate.config.hibernate;
 
 import org.hibernate.SessionFactory;
 import org.pshenko.hibernate.account.Account;
