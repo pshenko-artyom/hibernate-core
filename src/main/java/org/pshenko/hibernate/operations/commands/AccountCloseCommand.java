@@ -1,6 +1,7 @@
 package org.pshenko.hibernate.operations.commands;
 
 import org.pshenko.hibernate.account.AccountService;
+import org.pshenko.hibernate.account.CloseResult;
 import org.pshenko.hibernate.console.ConsoleInput;
 import org.pshenko.hibernate.operations.ConsoleOperationType;
 import org.pshenko.hibernate.operations.OperationCommand;
@@ -18,11 +19,11 @@ public class AccountCloseCommand implements OperationCommand {
 
     @Override
     public void execute() {
-//        int accountId = input.readPositiveInt("Enter account id to close:", "account id");
-//        CloseResult result = accountService.close(accountId);
-//        System.out.println("Account " + accountId + " closed. "
-//            + "Remaining balance " + result.transferredAmount()
-//            + " transferred to account " + result.targetAccountId() + ".");
+        int accountId = input.readPositiveInt("Enter account id to close:", "account id");
+        CloseResult result = accountService.close(accountId);
+        System.out.println("Account " + accountId + " closed. "
+            + "Remaining balance " + result.transferredAmount()
+            + " transferred to account " + result.targetAccountId() + ".");
     }
 
     @Override

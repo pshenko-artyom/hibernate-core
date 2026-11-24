@@ -1,6 +1,7 @@
 package org.pshenko.hibernate.operations.commands;
 
 import org.pshenko.hibernate.account.AccountService;
+import org.pshenko.hibernate.account.TransferResult;
 import org.pshenko.hibernate.console.ConsoleInput;
 import org.pshenko.hibernate.operations.ConsoleOperationType;
 import org.pshenko.hibernate.operations.OperationCommand;
@@ -18,23 +19,23 @@ public class AccountTransferCommand implements OperationCommand {
 
     @Override
     public void execute() {
-//        int from = input.readPositiveInt("Enter source account id:", "source account id");
-//        int to = input.readPositiveInt("Enter target account id:", "target account id");
-//        int amount = input.readPositiveInt("Enter amount:", "amount");
-//        TransferResult transfer = accountService.transfer(from, to, amount);
-//
-//        if (transfer.isSameUser()) {
-//            System.out.println("Transfer completed from account " + from
-//                + " to account " + to
-//                + ". Amount: " + amount
-//                + " (no commission, same user)");
-//        } else {
-//            System.out.println("Transfer completed from account " + from
-//                + " to account " + to
-//                + ". Amount: " + amount
-//                + ", commission: " + transfer.commission()
-//                + ", recipient received: " + transfer.amountAfterCommission());
-//        }
+        int from = input.readPositiveInt("Enter source account id:", "source account id");
+        int to = input.readPositiveInt("Enter target account id:", "target account id");
+        int amount = input.readPositiveInt("Enter amount:", "amount");
+        TransferResult transfer = accountService.transfer(from, to, amount);
+
+        if (transfer.isSameUser()) {
+            System.out.println("Transfer completed from account " + from
+                + " to account " + to
+                + ". Amount: " + amount
+                + " (no commission, same user)");
+        } else {
+            System.out.println("Transfer completed from account " + from
+                + " to account " + to
+                + ". Amount: " + amount
+                + ", commission: " + transfer.commission()
+                + ", recipient received: " + transfer.amountAfterCommission());
+        }
     }
 
     @Override

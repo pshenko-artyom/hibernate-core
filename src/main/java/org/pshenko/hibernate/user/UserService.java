@@ -33,24 +33,18 @@ public class UserService {
 
     public Optional<User> findByLogin(String rawLogin) {
         String login = validateAndTrim(rawLogin);
-        return transactionHelper.executeInTransaction(session -> {
-            return session.createQuery("from User where login = :login", User.class)
+        return transactionHelper.executeInTransaction(
+            session -> session.createQuery("from User where login = :login", User.class)
                 .setParameter("login", login)
-                .uniqueResultOptional();
-        });
-    }
-
-    public Optional<User> findById(int id) {
-        return transactionHelper.executeInTransaction(session -> {
-            return Optional.of(session.find(User.class, id));
-        });
+                .uniqueResultOptional()
+        );
     }
 
     public List<User> findAll() {
-        return transactionHelper.executeInTransaction(session -> {
-            return session.createQuery("select u from User u left join fetch u.accounts", User.class)
-                .getResultList();
-        });
+        return transactionHelper.executeInTransaction(session ->
+            session.createQuery("select u from User u left join fetch u.accounts order by u.id", User.class)
+                .getResultList()
+        );
     }
 
     private String validateAndTrim(String login) {
